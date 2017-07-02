@@ -1,0 +1,206 @@
+DROP DATABASE IF EXISTS MLR4;
+
+CREATE DATABASE IF NOT EXISTS MLR4;
+USE MLR4;
+# -----------------------------------------------------------------------------
+#       TABLE : MEMBRE
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS MEMBRE
+ (
+   ID_MEMBRE INTEGER(2) NOT NULL AUTO_INCREMENT ,
+   NOM CHAR(32) NULL  
+   , PRIMARY KEY (ID_MEMBRE) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       TABLE : FORMATEUR
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS FORMATEUR
+ (
+   ID_MEMBRE INTEGER(2) NOT NULL  ,
+   NOM CHAR(32) NULL  
+   , PRIMARY KEY (ID_MEMBRE) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       TABLE : ETUDIANT
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS ETUDIANT
+ (
+   ID_MEMBRE INTEGER(2) NOT NULL  ,
+   NOM CHAR(32) NULL  
+   , PRIMARY KEY (ID_MEMBRE) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       TABLE : EQUIPE
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS EQUIPE
+ (
+   ID_EQUIPE INTEGER(2) NOT NULL AUTO_INCREMENT ,
+   ID_PROJET INTEGER(2) NOT NULL  ,
+   ID_MEMBRE INTEGER(2) NOT NULL  ,
+   DATE_CREATION_EQUIPE CHAR(32) NULL  ,
+   COMMENTAIRE CHAR(32) NULL  
+   , PRIMARY KEY (ID_EQUIPE) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       INDEX DE LA TABLE EQUIPE
+# -----------------------------------------------------------------------------
+
+
+CREATE  INDEX I_FK_EQUIPE_ETUDIANT
+     ON EQUIPE (ID_MEMBRE ASC);
+
+CREATE  INDEX I_FK_EQUIPE_PROJET
+     ON EQUIPE (ID_PROJET ASC);
+
+# -----------------------------------------------------------------------------
+#       TABLE : PROMOTION
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS PROMOTION
+ (
+   ID_PROMOTION INTEGER(2) NOT NULL AUTO_INCREMENT 
+   , PRIMARY KEY (ID_PROMOTION) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       TABLE : PROJET
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS PROJET
+ (
+   ID_PROJET INTEGER(2) NOT NULL AUTO_INCREMENT ,
+   ID_PROMOTION INTEGER(2) NOT NULL  ,
+   ID_MEMBRE INTEGER(2) NOT NULL  ,
+   TITRE CHAR(32) NULL  ,
+   DATE_CREATION CHAR(32) NULL  ,
+   DATE_LIMITE_RENDU CHAR(32) NULL  ,
+   SUJET CHAR(32) NULL  
+   , PRIMARY KEY (ID_PROJET) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       INDEX DE LA TABLE PROJET
+# -----------------------------------------------------------------------------
+
+
+CREATE  INDEX I_FK_PROJET_PROMOTION
+     ON PROJET (ID_PROMOTION ASC);
+
+CREATE  INDEX I_FK_PROJET_FORMATEUR
+     ON PROJET (ID_MEMBRE ASC);
+
+# -----------------------------------------------------------------------------
+#       TABLE : MEMBRE_PROMOTION
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS MEMBRE_PROMOTION
+ (
+   ID_PROMOTION INTEGER(2) NOT NULL  ,
+   ID_MEMBRE INTEGER(2) NOT NULL  
+   , PRIMARY KEY (ID_PROMOTION,ID_MEMBRE) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       INDEX DE LA TABLE MEMBRE_PROMOTION
+# -----------------------------------------------------------------------------
+
+
+CREATE  INDEX I_FK_MEMBRE_PROMOTION_PROMOTION
+     ON MEMBRE_PROMOTION (ID_PROMOTION ASC);
+
+CREATE  INDEX I_FK_MEMBRE_PROMOTION_ETUDIANT
+     ON MEMBRE_PROMOTION (ID_MEMBRE ASC);
+
+# -----------------------------------------------------------------------------
+#       TABLE : MEMBRE_EQUIPE
+# -----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS MEMBRE_EQUIPE
+ (
+   ID_MEMBRE INTEGER(2) NOT NULL  ,
+   ID_EQUIPE INTEGER(2) NOT NULL  
+   , PRIMARY KEY (ID_MEMBRE,ID_EQUIPE) 
+ ) 
+ comment = "";
+
+# -----------------------------------------------------------------------------
+#       INDEX DE LA TABLE MEMBRE_EQUIPE
+# -----------------------------------------------------------------------------
+
+
+CREATE  INDEX I_FK_MEMBRE_EQUIPE_ETUDIANT
+     ON MEMBRE_EQUIPE (ID_MEMBRE ASC);
+
+CREATE  INDEX I_FK_MEMBRE_EQUIPE_EQUIPE
+     ON MEMBRE_EQUIPE (ID_EQUIPE ASC);
+
+
+# -----------------------------------------------------------------------------
+#       CREATION DES REFERENCES DE TABLE
+# -----------------------------------------------------------------------------
+
+
+ALTER TABLE FORMATEUR 
+  ADD FOREIGN KEY FK_FORMATEUR_MEMBRE (ID_MEMBRE)
+      REFERENCES MEMBRE (ID_MEMBRE) ;
+
+
+ALTER TABLE ETUDIANT 
+  ADD FOREIGN KEY FK_ETUDIANT_MEMBRE (ID_MEMBRE)
+      REFERENCES MEMBRE (ID_MEMBRE) ;
+
+
+ALTER TABLE EQUIPE 
+  ADD FOREIGN KEY FK_EQUIPE_ETUDIANT (ID_MEMBRE)
+      REFERENCES ETUDIANT (ID_MEMBRE) ;
+
+
+ALTER TABLE EQUIPE 
+  ADD FOREIGN KEY FK_EQUIPE_PROJET (ID_PROJET)
+      REFERENCES PROJET (ID_PROJET) ;
+
+
+ALTER TABLE PROJET 
+  ADD FOREIGN KEY FK_PROJET_PROMOTION (ID_PROMOTION)
+      REFERENCES PROMOTION (ID_PROMOTION) ;
+
+
+ALTER TABLE PROJET 
+  ADD FOREIGN KEY FK_PROJET_FORMATEUR (ID_MEMBRE)
+      REFERENCES FORMATEUR (ID_MEMBRE) ;
+
+
+ALTER TABLE MEMBRE_PROMOTION 
+  ADD FOREIGN KEY FK_MEMBRE_PROMOTION_PROMOTION (ID_PROMOTION)
+      REFERENCES PROMOTION (ID_PROMOTION) ;
+
+
+ALTER TABLE MEMBRE_PROMOTION 
+  ADD FOREIGN KEY FK_MEMBRE_PROMOTION_ETUDIANT (ID_MEMBRE)
+      REFERENCES ETUDIANT (ID_MEMBRE) ;
+
+
+ALTER TABLE MEMBRE_EQUIPE 
+  ADD FOREIGN KEY FK_MEMBRE_EQUIPE_ETUDIANT (ID_MEMBRE)
+      REFERENCES ETUDIANT (ID_MEMBRE) ;
+
+
+ALTER TABLE MEMBRE_EQUIPE 
+  ADD FOREIGN KEY FK_MEMBRE_EQUIPE_EQUIPE (ID_EQUIPE)
+      REFERENCES EQUIPE (ID_EQUIPE) ;
+
